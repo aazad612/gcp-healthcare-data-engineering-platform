@@ -9,7 +9,7 @@ terraform {
 
   backend "gcs" {
     bucket = "johneys-tf-states"
-    prefix = "healthcare-landing-zone/05-domains"
+    prefix = "healthcare-landing-zone/workloads/00_shared_ops"
   }
 }
 

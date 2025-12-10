@@ -9,6 +9,11 @@ resource "google_project_service" "res_apis" {
   project = google_project.res_host.project_id
   service = "compute.googleapis.com"
 }
+resource "google_project_service" "res_iam" {
+  project = google_project.res_host.project_id
+  service = "iam.googleapis.com"
+}
+
 
 resource "google_compute_shared_vpc_host_project" "res_host" {
   project    = google_project.res_host.project_id
@@ -19,6 +24,9 @@ resource "google_compute_network" "res_vpc" {
   name                    = var.host_projects["research"].vpc_name
   project                 = google_project.res_host.project_id
   auto_create_subnetworks = false
+  depends_on = [
+    google_project_service.res_apis
+  ]
 }
 
 resource "google_compute_subnetwork" "res_int" {

@@ -10,6 +10,21 @@ resource "google_project_service" "hub_apis" {
   service = "compute.googleapis.com"
 }
 
+resource "google_project_service" "hub_iap" {
+  project = google_project.hub_host.project_id
+  service = "iap.googleapis.com"
+}
+
+resource "google_project_service" "hub_bigquery" {
+  project = google_project.hub_host.project_id
+  service = "bigquery.googleapis.com"
+}
+
+resource "google_project_service" "hub_iam" {
+  project = google_project.hub_host.project_id
+  service = "iam.googleapis.com"
+}
+
 resource "google_compute_shared_vpc_host_project" "hub_host" {
   project    = google_project.hub_host.project_id
   depends_on = [google_project_service.hub_apis]

@@ -10,6 +10,11 @@ resource "google_project_service" "clin_apis" {
   service = "compute.googleapis.com"
 }
 
+resource "google_project_service" "clin_iam" {
+  project = google_project.clin_host.project_id
+  service = "iam.googleapis.com"
+}
+
 resource "google_compute_shared_vpc_host_project" "clin_host" {
   project    = google_project.clin_host.project_id
   depends_on = [google_project_service.clin_apis]
@@ -19,6 +24,9 @@ resource "google_compute_network" "clin_vpc" {
   name                    = var.host_projects["clinical"].vpc_name
   project                 = google_project.clin_host.project_id
   auto_create_subnetworks = false
+  depends_on = [
+    google_project_service.clin_apis
+  ]
 }
 
 resource "google_compute_subnetwork" "clin_int" {

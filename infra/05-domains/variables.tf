@@ -9,6 +9,6 @@ variable "service_projects" {
     folder_key       = string
     host_project_key = string
     subnet_key       = string
-    apis             = list(string) # <--- NEW FIELD
+    apis             = list(string)
   }))
 }

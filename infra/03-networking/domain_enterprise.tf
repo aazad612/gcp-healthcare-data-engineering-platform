@@ -15,6 +15,13 @@ resource "google_compute_shared_vpc_host_project" "ent_host" {
   depends_on = [google_project_service.ent_apis]
 }
 
+resource "google_project_service" "ent_iam" {
+  project = google_project.ent_host.project_id
+  service = "iam.googleapis.com"
+}
+
+
+
 resource "google_compute_network" "ent_vpc" {
   name                    = var.host_projects["enterprise"].vpc_name # <--- Parameterized
   project                 = google_project.ent_host.project_id
