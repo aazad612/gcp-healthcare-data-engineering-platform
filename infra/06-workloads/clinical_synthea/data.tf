@@ -28,3 +28,18 @@ locals {
     env => data.terraform_remote_state.domains.outputs.gcs_service_accounts[key]
   }
 }
+
+
+
+data "terraform_remote_state" "shared_ops" {
+  backend = "gcs"
+  config = {
+    bucket = "johneys-tf-states"
+    prefix = "healthcare-landing-zone/workloads/00_shared_ops"
+  }
+}
+
+locals {
+  df_runners = data.terraform_remote_state.shared_ops.outputs.df_runner_service_accounts
+}
+

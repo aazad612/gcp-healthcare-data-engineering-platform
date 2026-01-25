@@ -23,3 +23,20 @@ locals {
   subnet_ids       = data.terraform_remote_state.net.outputs.subnet_ids
   vpc_ids          = data.terraform_remote_state.net.outputs.vpc_ids
 }
+
+locals {
+  # Auto-detect NP & PD service projects based on project_id suffix
+  np_service_projects = {
+    for k, v in var.service_projects :
+    k => v if can(regex(".*-(np|dev|qa|uat)$", v.project_id))
+  }
+
+  pd_service_projects = {
+    for k, v in var.service_projects :
+    k => v if can(regex(".*-pd$", v.project_id))
+  }
+
+  # Shared project identifiers
+  shared_np_project = var.service_projects["shared_np"].project_id
+  shared_pd_project = var.service_projects["shared_pd"].project_id
+}

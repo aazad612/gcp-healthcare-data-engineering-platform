@@ -48,7 +48,10 @@ service_projects = {
       "datacatalog.googleapis.com",      # Central Governance
       "dlp.googleapis.com",              # PII Scanner
       "secretmanager.googleapis.com",    # DB Credentials
-      "storage.googleapis.com"           # DB Credentials
+      "dataflow.googleapis.com",
+      "storage.googleapis.com",           # DB Credentials
+      "cloudfunctions.googleapis.com",
+      "run.googleapis.com"
     ]
   }
 
@@ -60,12 +63,15 @@ service_projects = {
     apis = [
       "compute.googleapis.com",
       "composer.googleapis.com",         # Airflow
+      "dataflow.googleapis.com",
       "cloudbuild.googleapis.com",       # CI/CD
       "artifactregistry.googleapis.com", # Docker images for dbt/Python
       "datacatalog.googleapis.com",      # Central Governance
       "dlp.googleapis.com",              # PII Scanner
       "secretmanager.googleapis.com",    # DB Credentials
-      "storage.googleapis.com"           # DB Credentials
+      "storage.googleapis.com",           # DB Credentials
+      "cloudfunctions.googleapis.com",
+      "run.googleapis.com"
     ]
   }
 
@@ -137,3 +143,4 @@ service_projects = {
     ]
   }
 }
+

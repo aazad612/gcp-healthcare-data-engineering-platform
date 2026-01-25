@@ -5,7 +5,6 @@ variable "impersonate_service_account" {
 variable "target_projects" {
   description = "Map of Environment Name to Logical Project Key (from Layer 05)"
   type        = map(string)
-  # Example: { np = "shared_orch_np", pd = "shared_orch_pd" }
 }
 
 variable "data_location" {
@@ -13,6 +12,3 @@ variable "data_location" {
   default     = "US"
 }
 
-# variable "dataset_id" {
-#   description = "new dataset"
-# }

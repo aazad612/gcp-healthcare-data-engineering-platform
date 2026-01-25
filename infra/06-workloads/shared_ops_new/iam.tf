@@ -72,3 +72,16 @@ resource "google_bigquery_dataset_access" "cb_data_editor" {
   ]
 }
 
+
+resource "google_service_account_iam_member" "runner_impersonates_service" {
+  for_each = local.domain_projects
+
+  # TARGET: The Compute SA in the Synthea Project (dev/qa/uat)
+  service_account_id = "projects/${local.project_ids[each.key]}/serviceAccounts/${local.pipeline_sas[each.key]}"
+  
+  # RIGHT: Token Creator (Allows Impersonation)
+  role = "roles/iam.serviceAccountTokenCreator"
+
+  # ACTOR: The Dataflow Runner (df-runner-np)
+  member = "serviceAccount:${google_service_account.df_runner[local.domain_to_env[each.key]].email}"
+}

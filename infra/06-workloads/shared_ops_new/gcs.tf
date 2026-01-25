@@ -33,43 +33,28 @@ resource "google_storage_bucket_iam_member" "df_temp_access" {
   member = "serviceAccount:${google_service_account.df_runner[each.key].email}"
 }
 
-###########################################
-# CREATE DATA LAKE BUCKETS (Missing Step)
-###########################################
 
-resource "google_storage_bucket" "data_lakes" {
-  for_each = local.domain_projects
+# ###########################################
+# # RAW BUCKET ACCESS — DOMAIN PROJECTS
+# ###########################################
 
-  # Use the exact same name map you defined in locals
-  name     = local.data_lake_buckets[each.key]
-  project  = local.project_ids[each.key]
-  location = "US"
+# # local.data_lake_buckets = dynamic bucket names based on suffix mapping.
 
-  uniform_bucket_level_access = true
-  force_destroy               = true # Be careful with this in Prod!
-}
+# resource "google_storage_bucket_iam_member" "df_raw_admin" {
+#   for_each = local.domain_projects
 
-###########################################
-# RAW BUCKET ACCESS — DOMAIN PROJECTS
-###########################################
-
-# local.data_lake_buckets = dynamic bucket names based on suffix mapping.
-
-resource "google_storage_bucket_iam_member" "df_raw_admin" {
-  for_each = local.domain_projects
-
-  bucket = local.data_lake_buckets[each.key]
-  role   = "roles/storage.objectAdmin"
-  member = "serviceAccount:${google_service_account.df_runner[local.domain_to_env[each.key]].email}"
-}
+#   bucket = local.data_lake_buckets[each.key]
+#   role   = "roles/storage.objectAdmin"
+#   member = "serviceAccount:${google_service_account.df_runner[local.domain_to_env[each.key]].email}"
+# }
 
 
-output "df_raw_bucket_access" {
-  value = {
-    for key, _ in local.domain_projects :
-    key => {
-      bucket = local.data_lake_buckets[key]
-      sa     = google_service_account.df_runner[local.domain_to_env[key]].email
-    }
-  }
-}
+# output "df_raw_bucket_access" {
+#   value = {
+#     for key, _ in local.domain_projects :
+#     key => {
+#       bucket = local.data_lake_buckets[key]
+#       sa     = google_service_account.df_runner[local.domain_to_env[key]].email
+#     }
+#   }
+# }

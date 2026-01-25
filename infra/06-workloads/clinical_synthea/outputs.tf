@@ -28,7 +28,3 @@ output "data_lake_buckets" {
   value       = { for env, bkt in google_storage_bucket.data_lake : env => bkt.name }
 }
 
-# output "dataflow_temp_buckets" {
-#   description = "Map of Dataflow Temp Bucket names per environment."
-#   value       = { for env, bkt in google_storage_bucket.dataflow_temp : env => bkt.name }
-# }

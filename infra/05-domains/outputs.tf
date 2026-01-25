@@ -20,3 +20,10 @@ output "gcs_service_accounts" {
     for k, v in module.service_projects : k => "service-${v.project_number}@gs-project-accounts.iam.gserviceaccount.com"
   }
 }
+
+# output "dataflow_worker_service_accounts" {
+#   description = "Map of dedicated Dataflow Worker Service Accounts (np/pd) created in Shared Projects."
+#   value = {
+#     for k, v in google_service_account.dataflow_worker : k => v.email
+#   }
+# }

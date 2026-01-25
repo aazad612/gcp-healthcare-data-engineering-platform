@@ -6,6 +6,15 @@ data "terraform_remote_state" "domains" {
   }
 }
 
+data "terraform_remote_state" "synthea" {
+  backend = "gcs"
+  config = {
+    bucket = "johneys-tf-states"
+    prefix = "workloads/clinical_synthea" # Points to the Synthea state
+  }
+}
+
+
 locals {
 
   # project_ids loaded from remote state
@@ -44,15 +53,4 @@ locals {
     k => replace(k, ".*_", "")
   }
 
-  ###########################################
-  # FINAL RAW BUCKET NAMES (YOU APPROVED)
-  ###########################################
-  data_lake_buckets = {
-    for domain_key, project_id in local.domain_projects :
-    domain_key => (
-      local.domain_to_env[domain_key] == "np" ?
-      "bkt-clin-syn-lake-dev-${project_id}" :
-      "bkt-clin-syn-lake-pd-${project_id}"
-    )
-  }
 }
