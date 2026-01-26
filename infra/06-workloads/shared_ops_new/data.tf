@@ -53,4 +53,9 @@ locals {
     k => replace(k, ".*_", "")
   }
 
+  domain_suffix_new = {
+    for k in keys(local.domain_projects) :
+    k => element(split("_", k), length(split("_", k)) - 1)
+  }
+
 }
