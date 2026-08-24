@@ -12,6 +12,7 @@ top_level_folders = {
   business_units      = "fd-business-units"
   data_governance     = "fd-data-governance"
   sandboxes           = "fd-sandboxes"
+  research            = "fd-research"
 }
 
 # 4. Organization Level Permissions

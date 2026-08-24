@@ -9,8 +9,8 @@ terraform {
   }
 
   backend "gcs" {
-    bucket = "johneys-tf-states"          # Your existing bucket
-    prefix = "healthcare-landing-zone/01-organization"
+    bucket = "bkt-tfstate-b2796051"       # prj-syn-admin-bs-b2796051
+    prefix = "syn-org"
   }
 }
 

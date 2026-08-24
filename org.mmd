@@ -1,42 +1,56 @@
 graph TD
-    %% Nodes and Styles
-    Org[GCP Organization]
-    
-    subgraph Folders
-        Shared[📂 Shared Services]
-        Health[📂 Healthcare Platform]
-    end
+    Org["🏢 GCP Organization<br/>aazads.us — 9139207439"]
 
-    subgraph "Shared Services Domain"
-        %% Quotes added around the label text below to fix the syntax error
-        PrjSharedNP["PROJECT: prj-lbd-shared-np<br/>(Standards, Airflow, Dataflow)"]
-        PrjSharedPD["PROJECT: prj-lbd-shared-pd<br/>(Standards, Airflow, Dataflow)"]
-    end
+    %% ============ FOLDERS ============
+    Org --> FdNet["📂 fd-networking"]
+    Org --> FdShared["📂 fd-shared-services"]
+    Org --> FdHealth["📂 fd-healthcare-platform"]
+    Org --> FdRCM["📂 fd-revenue-cycle&nbsp;&nbsp;🆕 proposed"]
+    Org --> FdBU["📂 fd-business-units<br/><i>(empty)</i>"]
+    Org --> FdGov["📂 fd-data-governance<br/><i>(empty)</i>"]
+    Org --> FdSand["📂 fd-sandboxes<br/><i>(empty)</i>"]
 
-    subgraph "Clinical Domain (Synthea)"
-        PrjClinNP["PROJECT: prj-clin-syn-np<br/>(Dev/UAT/QA - 
-                                                  BigQuery (Bronze/Silver/Gold), 
-                                                    GCS, PubSub)"]
-        PrjClinPD["PROJECT: prj-clin-syn-pd<br/>(Prod - 
-                                                  BigQuery (Bronze/Silver/Gold), 
-                                                    GCS, PubSub)"]
-    end
+    %% ============ NETWORKING (Shared VPC hosts) ============
+    FdNet --> NHub["prj-net-common-pd-host<br/>vpc-hub-main"]
+    FdNet --> NClin["prj-net-clin-pd-host<br/>vpc-clin-prod"]
+    FdNet --> NEnt["prj-net-ent-pd-host<br/>vpc-ent-prod"]
+    FdNet --> NRes["prj-net-res-pd-host<br/>vpc-res-prod"]
 
-    %% Relationships
-    Org --> Shared
-    Org --> Health
+    %% ============ SHARED SERVICES ============
+    FdShared --> ShNP["prj-lbd-shared-np<br/>Composer · Dataflow · Cloud Build"]
+    FdShared --> ShPD["prj-lbd-shared-pd"]
 
-    Shared --> PrjSharedNP
-    Shared --> PrjSharedPD
+    %% ============ CLINICAL DOMAIN (Synthea) ============
+    FdHealth --> ClinNP["prj-clin-syn-np<br/>dev — Bronze/Silver/Gold"]
+    FdHealth --> ClinUAT["prj-clin-syn-uat"]
+    FdHealth --> ClinQA["prj-clin-syn-qa"]
+    FdHealth --> ClinPD["prj-clin-syn-pd<br/>prod"]
 
-    Health --> PrjClinNP
-    Health --> PrjClinPD
+    %% ============ REVENUE CYCLE DOMAIN (proposed new domain) ============
+    FdRCM -.-> RcmNP["prj-rcm-claims-np&nbsp;&nbsp;🆕<br/>proposed — claims/billing/payer 837-835 feeds"]
+    FdRCM -.-> RcmPD["prj-rcm-claims-pd&nbsp;&nbsp;🆕<br/>proposed"]
 
-    %% Styling
+    %% ============ LEGACY / UNGOVERNED (real, exists today) ============
+    Org -.-> Junk1["📂 management"]
+    Org -.-> Junk2["📂 Data"]
+    Org -.-> Junk3["📂 hcl-migration"]
+    Org -.-> Junk4["📂 aazads-test"]
+    Org -.-> Junk5["📂 fd-outdated-junk"]
+    Org -.-> Stray["⚠️ ungoverned root projects:<br/>cortex-poc-4ac29e, cortex-poc-s4-980943,<br/>learn-by-doing-data-engg, ledgerlens-d9485a,<br/>shared-infrastructure-321018"]
+
+    %% ============ STYLES ============
     classDef org fill:#4285F4,stroke:#333,stroke-width:2px,color:white;
     classDef folder fill:#F4B400,stroke:#333,stroke-width:2px,color:white;
+    classDef emptyFolder fill:#F4B400,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 4 2;
     classDef project fill:#0F9D58,stroke:#333,stroke-width:1px,color:white;
-    
+    classDef proposed fill:#0F9D58,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 5 3;
+    classDef proposedFolder fill:#F4B400,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 5 3;
+    classDef legacy fill:#9AA0A6,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 3 3;
+
     class Org org;
-    class Shared,Health folder;
-    class PrjSharedNP,PrjSharedPD,PrjClinNP,PrjClinPD project;
+    class FdNet,FdShared,FdHealth folder;
+    class FdBU,FdGov,FdSand emptyFolder;
+    class FdRCM proposedFolder;
+    class NHub,NClin,NEnt,NRes,ShNP,ShPD,ClinNP,ClinUAT,ClinQA,ClinPD project;
+    class RcmNP,RcmPD proposed;
+    class Junk1,Junk2,Junk3,Junk4,Junk5,Stray legacy;

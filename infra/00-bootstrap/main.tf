@@ -11,8 +11,8 @@ resource "random_id" "suffix" {
 
 # 2. The "Seed" Project (Where Terraform lives)
 resource "google_project" "seed_project" {
-  name            = "prj-seed-automation"
-  project_id      = "prj-seed-auto-${random_id.suffix.hex}"
+  name            = "syn-admin-bs"
+  project_id      = "prj-syn-admin-bs-${random_id.suffix.hex}"
   billing_account = var.billing_account
   org_id          = var.org_id
 }

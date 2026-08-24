@@ -1,46 +1,48 @@
+%%{init: {"themeVariables": {"fontSize": "22px"}, "flowchart": {"nodeSpacing": 60, "rankSpacing": 80}} }%%
 graph TD
     %% =========================================
-    %% 1. ON-PREMISE CONNECTIVITY
+    %% 1. ON-PREMISE CONNECTIVITY  —  ⚠️ NOT BUILT
+    %% No VPN gateway, Interconnect, or on-prem link exists in code or live state.
+    %% This is aspirational only — shown greyed out.
     %% =========================================
-    subgraph OnPrem_Zone [🏢 On-Premise & Interconnect]
-        OnPrem[Legacy Data Center<br/>VPN - Direct Connect]
-        Interconnect((⚡ Dedicated<br/>Interconnect))
+    subgraph OnPrem_Zone ["🏢 On-Premise (NOT BUILT — planned only)"]
+        OnPrem["Legacy Data Center<br/><b>no link exists yet</b>"]
     end
 
     %% =========================================
     %% 2. THE HUB (Networking Core)
     %% =========================================
-    subgraph Hub_Project [PROJECT: prj-net-common-pd-host]
-        subgraph Hub_VPC [vpc-hub-main]
+    subgraph Hub_Project ["PROJECT: prj-net-common-pd-host"]
+        subgraph Hub_VPC ["vpc-hub-main (GLOBAL routing)"]
             direction TB
-            Hub_Subnet["subnet: sb-hub-main-usc1<br/>10.0.0.0/24"]
-            Hub_NAT[Cloud NAT - Router]
+            Hub_Subnet["sb-hub-main-usc1<br/><b>10.0.0.0/24</b><br/>us-central1"]
+            Hub_NAT["Cloud NAT<br/><b>⚠️ NOT DEPLOYED</b><br/>(nat.tf fully commented out)"]
         end
     end
 
     %% =========================================
-    %% 3. THE SPOKES (Domain Host Projects)
+    %% 3. THE SPOKES (Domain Host Projects — Shared VPC service projects attach here)
     %% =========================================
 
     %% --- CLINICAL SPOKE ---
-    subgraph Clin_Project [PROJECT: prj-net-clin-pd-host]
-        subgraph Clin_VPC [vpc-clin-prod]
-            Clin_Subnet_Int["subnet: sb-clin-prod-int-usc1<br/>10.10.1.0/24<br/>🔒 Private-Internal"]
-            Clin_Subnet_Ext["subnet: sb-clin-prod-ext-usc1<br/>10.10.2.0/24<br/>🌐 External-Ingress"]
+    subgraph Clin_Project ["PROJECT: prj-net-clin-pd-host"]
+        subgraph Clin_VPC ["vpc-clin-prod (REGIONAL routing)"]
+            Clin_Subnet_Int["sb-clin-prod-int-usc1<br/><b>10.10.1.0/24</b><br/>🔒 internal"]
+            Clin_Subnet_Ext["sb-clin-prod-ext-usc1<br/><b>10.10.2.0/24</b><br/>🌐 external-facing"]
         end
     end
 
     %% --- ENTERPRISE SPOKE ---
-    subgraph Ent_Project [PROJECT: prj-net-ent-pd-host]
-        subgraph Ent_VPC [vpc-ent-prod]
-            Ent_Subnet["subnet: sb-ent-prod-int-usc1<br/>10.20.1.0/24"]
+    subgraph Ent_Project ["PROJECT: prj-net-ent-pd-host"]
+        subgraph Ent_VPC ["vpc-ent-prod (REGIONAL routing)<br/>no service project attached yet"]
+            Ent_Subnet["sb-ent-prod-int-usc1<br/><b>10.20.1.0/24</b>"]
         end
     end
 
     %% --- RESEARCH SPOKE ---
-    subgraph Res_Project [PROJECT: prj-net-res-pd-host]
-        subgraph Res_VPC [vpc-res-prod]
-            Res_Subnet["subnet: sb-res-prod-int-usc1<br/>10.30.1.0/24"]
+    subgraph Res_Project ["PROJECT: prj-net-res-pd-host"]
+        subgraph Res_VPC ["vpc-res-prod (REGIONAL routing)<br/>no service project attached yet"]
+            Res_Subnet["sb-res-prod-int-usc1<br/><b>10.30.1.0/24</b>"]
         end
     end
 
@@ -48,31 +50,34 @@ graph TD
     %% CONNECTIONS & PEERING
     %% =========================================
 
-    %% 1. Hybrid Link
-    OnPrem === Interconnect
-    Interconnect ===|BGP Routing| Hub_NAT
+    %% 1. Hybrid link — does not exist, dotted + grey
+    OnPrem -.->|"planned — no resource exists"| Hub_VPC
 
-    %% 2. Hub <-> Spoke Peering
-    Hub_VPC -.-> |"VPC Peering<br/>Transit"| Clin_VPC
-    Hub_VPC -.-> |"VPC Peering<br/>Transit"| Ent_VPC
-    Hub_VPC -.-> |"VPC Peering<br/>Transit"| Res_VPC
+    %% 2. Hub <-> Spoke Peering — defined in peering.tf as bidirectional pairs,
+    %% but `gcloud compute networks peerings list` shows ZERO active peerings today.
+    %% Peering is always two one-way resources (non-transitive: spokes can't reach each other via hub).
+    Hub_VPC <-.->|"peer-hub-to-clin / peer-clin-to-hub<br/>⚠️ defined in code, NOT active live"| Clin_VPC
+    Hub_VPC <-.->|"peer-hub-to-ent / peer-ent-to-hub<br/>⚠️ defined in code, NOT active live"| Ent_VPC
+    Hub_VPC <-.->|"peer-hub-to-res / peer-res-to-hub<br/>⚠️ defined in code, NOT active live"| Res_VPC
 
     %% =========================================
     %% STYLING
     %% =========================================
-    classDef onprem fill:#424242,stroke:#000,stroke-width:2px,color:white;
-    classDef hubProject fill:#E3F2FD,stroke:#1565C0,stroke-width:2px;
-    classDef hubVPC fill:#BBDEFB,stroke:#1976D2,stroke-width:1px;
-    classDef spokeProject fill:#F1F8E9,stroke:#558B2F,stroke-width:2px;
-    classDef spokeVPC fill:#DCEDC8,stroke:#689F38,stroke-width:1px,stroke-dasharray: 5 5;
-    classDef subnet fill:#FFFFFF,stroke:#333,stroke-width:1px;
+    classDef onprem fill:#424242,stroke:#000,stroke-width:2px,color:#FFFFFF,font-size:20px;
+    classDef notbuilt fill:#616161,stroke:#000,stroke-width:2px,color:#FFFFFF,font-size:18px,stroke-dasharray:5 5;
+    classDef hubProject fill:#E3F2FD,stroke:#1565C0,stroke-width:3px,color:#0D2A4A,font-size:20px,font-weight:bold;
+    classDef hubVPC fill:#BBDEFB,stroke:#1976D2,stroke-width:2px,color:#0D2A4A,font-size:19px;
+    classDef spokeProject fill:#F1F8E9,stroke:#558B2F,stroke-width:3px,color:#1B360F,font-size:20px,font-weight:bold;
+    classDef spokeVPC fill:#DCEDC8,stroke:#689F38,stroke-width:2px,stroke-dasharray:5 5,color:#1B360F,font-size:19px;
+    classDef subnet fill:#FFFFFF,stroke:#333,stroke-width:2px,color:#111111,font-size:19px;
 
-    class OnPrem,Interconnect onprem;
+    class OnPrem onprem;
+    class Hub_NAT notbuilt;
     class Hub_Project hubProject;
     class Hub_VPC hubVPC;
     class Clin_Project,Ent_Project,Res_Project spokeProject;
     class Clin_VPC,Ent_VPC,Res_VPC spokeVPC;
     class Hub_Subnet,Clin_Subnet_Int,Clin_Subnet_Ext,Ent_Subnet,Res_Subnet subnet;
 
-    %% Highlight the peering links orange
-    linkStyle 2,3,4 stroke:#F57C00,stroke-width:3px,stroke-dasharray: 5 5;
+    linkStyle 0 stroke:#9E9E9E,stroke-width:2px,stroke-dasharray:5 5;
+    linkStyle 1,2,3 stroke:#F57C00,stroke-width:3px,stroke-dasharray:5 5;
