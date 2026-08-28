@@ -1,56 +1,61 @@
-graph TD
+%%{init: {"themeVariables": {"fontSize": "16px"}, "flowchart": {"nodeSpacing": 25, "rankSpacing": 45}} }%%
+graph LR
     Org["🏢 GCP Organization<br/>aazads.us — 9139207439"]
 
-    %% ============ FOLDERS ============
     Org --> FdNet["📂 fd-networking"]
     Org --> FdShared["📂 fd-shared-services"]
     Org --> FdHealth["📂 fd-healthcare-platform"]
-    Org --> FdRCM["📂 fd-revenue-cycle&nbsp;&nbsp;🆕 proposed"]
+    Org --> FdRes["📂 fd-research"]
+    Org --> FdRCM["📂 fd-revenue-cycle&nbsp;🆕 proposed"]
     Org --> FdBU["📂 fd-business-units<br/><i>(empty)</i>"]
     Org --> FdGov["📂 fd-data-governance<br/><i>(empty)</i>"]
     Org --> FdSand["📂 fd-sandboxes<br/><i>(empty)</i>"]
+    Org -.-> Legacy["⚠️ ungoverned/legacy:<br/>management, Data, hcl-migration,<br/>aazads-test, fd-outdated-junk,<br/>+5 root projects with no folder"]
 
-    %% ============ NETWORKING (Shared VPC hosts) ============
-    FdNet --> NHub["prj-net-common-pd-host<br/>vpc-hub-main"]
-    FdNet --> NClin["prj-net-clin-pd-host<br/>vpc-clin-prod"]
-    FdNet --> NEnt["prj-net-ent-pd-host<br/>vpc-ent-prod"]
-    FdNet --> NRes["prj-net-res-pd-host<br/>vpc-res-prod"]
+    subgraph netbox [" "]
+        direction TB
+        NHub["prj-net-common-pd-host<br/>vpc-hub-main"]
+        NClin["prj-net-clin-pd-host<br/>vpc-clin-prod"]
+        NEnt["prj-net-ent-pd-host<br/>vpc-ent-prod"]
+        NRes["prj-net-res-pd-host<br/>vpc-res-prod"]
+    end
+    FdNet --> netbox
 
-    %% ============ SHARED SERVICES ============
-    FdShared --> ShNP["prj-lbd-shared-np<br/>Composer · Dataflow · Cloud Build"]
-    FdShared --> ShPD["prj-lbd-shared-pd"]
+    subgraph sharedbox [" "]
+        direction TB
+        ShNP["prj-lbd-shared-np"]
+        ShPD["prj-lbd-shared-pd"]
+    end
+    FdShared --> sharedbox
 
-    %% ============ CLINICAL DOMAIN (Synthea) ============
-    FdHealth --> ClinNP["prj-clin-syn-np<br/>dev — Bronze/Silver/Gold"]
-    FdHealth --> ClinUAT["prj-clin-syn-uat"]
-    FdHealth --> ClinQA["prj-clin-syn-qa"]
-    FdHealth --> ClinPD["prj-clin-syn-pd<br/>prod"]
+    subgraph clinbox [" "]
+        direction TB
+        ClinNP["prj-clin-syn-np — dev"]
+        ClinUAT["prj-clin-syn-uat"]
+        ClinQA["prj-clin-syn-qa"]
+        ClinPD["prj-clin-syn-pd — prod"]
+    end
+    FdHealth --> clinbox
 
-    %% ============ REVENUE CYCLE DOMAIN (proposed new domain) ============
-    FdRCM -.-> RcmNP["prj-rcm-claims-np&nbsp;&nbsp;🆕<br/>proposed — claims/billing/payer 837-835 feeds"]
-    FdRCM -.-> RcmPD["prj-rcm-claims-pd&nbsp;&nbsp;🆕<br/>proposed"]
+    FdRes -.-> ResNote["no project yet<br/>(folder created, empty)"]
 
-    %% ============ LEGACY / UNGOVERNED (real, exists today) ============
-    Org -.-> Junk1["📂 management"]
-    Org -.-> Junk2["📂 Data"]
-    Org -.-> Junk3["📂 hcl-migration"]
-    Org -.-> Junk4["📂 aazads-test"]
-    Org -.-> Junk5["📂 fd-outdated-junk"]
-    Org -.-> Stray["⚠️ ungoverned root projects:<br/>cortex-poc-4ac29e, cortex-poc-s4-980943,<br/>learn-by-doing-data-engg, ledgerlens-d9485a,<br/>shared-infrastructure-321018"]
+    FdRCM -.-> RcmNP["prj-rcm-claims-np&nbsp;🆕<br/>proposed"]
+    FdRCM -.-> RcmPD["prj-rcm-claims-pd&nbsp;🆕<br/>proposed"]
 
-    %% ============ STYLES ============
     classDef org fill:#4285F4,stroke:#333,stroke-width:2px,color:white;
     classDef folder fill:#F4B400,stroke:#333,stroke-width:2px,color:white;
-    classDef emptyFolder fill:#F4B400,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 4 2;
+    classDef emptyFolder fill:#F4B400,stroke:#333,stroke-width:1px,color:white,stroke-dasharray:4 2;
+    classDef proposedFolder fill:#F4B400,stroke:#333,stroke-width:1px,color:white,stroke-dasharray:5 3;
     classDef project fill:#0F9D58,stroke:#333,stroke-width:1px,color:white;
-    classDef proposed fill:#0F9D58,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 5 3;
-    classDef proposedFolder fill:#F4B400,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 5 3;
-    classDef legacy fill:#9AA0A6,stroke:#333,stroke-width:1px,color:white,stroke-dasharray: 3 3;
+    classDef proposed fill:#0F9D58,stroke:#333,stroke-width:1px,color:white,stroke-dasharray:5 3;
+    classDef legacy fill:#9AA0A6,stroke:#333,stroke-width:1px,color:white,stroke-dasharray:3 3;
+    classDef boxwrap fill:none,stroke:none;
 
     class Org org;
-    class FdNet,FdShared,FdHealth folder;
+    class FdNet,FdShared,FdHealth,FdRes folder;
     class FdBU,FdGov,FdSand emptyFolder;
     class FdRCM proposedFolder;
     class NHub,NClin,NEnt,NRes,ShNP,ShPD,ClinNP,ClinUAT,ClinQA,ClinPD project;
-    class RcmNP,RcmPD proposed;
-    class Junk1,Junk2,Junk3,Junk4,Junk5,Stray legacy;
+    class RcmNP,RcmPD,ResNote proposed;
+    class Legacy legacy;
+    class netbox,sharedbox,clinbox boxwrap;
